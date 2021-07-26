@@ -1,0 +1,140 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ansible server vpc
+
+Mappings:
+  StackConfig:
+    VPC:
+      CIDR: 10.0.0.0/26
+    PublicSubnet:
+      CIDR: 10.0.0.0/28
+    PrivateSubnet:
+      CIDR: 10.0.0.16/28
+
+Resources:
+#---vpc
+  VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: !FindInMap [ StackConfig, VPC, CIDR ]
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: "default"
+      Tags: 
+        - Key: Name
+          Value: ansible_vpc
+
+#---Public RoteTable, Route, Subnet, Assosiation
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn: AttachGateway
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: ansible_vpc_Publicroutetable
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      AvailabilityZone: !Sub "${AWS::Region}a"
+      CidrBlock: !FindInMap [ StackConfig, PublicSubnet, CIDR ]
+      VpcId: !Ref VPC
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: ansible_vpc_Publicsubnet
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+#---Private RoteTable, Route, Subnet, Assosiation
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn: AttachGateway
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: ansible_vpc_Privateroutetable
+
+#  PrivateRouteNAT:
+#    Type: AWS::EC2::Route
+#    Properties:
+#      RouteTableId: !Ref PrivateRouteTable
+#      DestinationCidrBlock: 0.0.0.0/0
+#      NatGatewayId: !Ref NATGateway
+
+  PrivateSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      AvailabilityZone: !Sub "${AWS::Region}c"
+      CidrBlock: !FindInMap [ StackConfig, PrivateSubnet, CIDR ]
+      VpcId: !Ref VPC
+      Tags: 
+        - Key: Name
+          Value: ansible_vpc_Privatesubnet
+
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable
+
+#---IGW,IGW Attach
+  InternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ansible_vpc_igw
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+#---NAT
+#  NATGateway:
+#    Type: AWS::EC2::NatGateway
+#    Properties: 
+#      AllocationId: !GetAtt NATGatewayCEIP.AllocationId
+#      ConnectivityType: public
+#      SubnetId: !Ref PublicSubnet
+#      Tags: 
+#        - Key: Name
+#          Value: ansible_vpc_nat
+
+#---NATGateway For EIP Create
+#  NATGatewayCEIP:
+#    Type: "AWS::EC2::EIP"
+#    Properties:
+#      Domain: vpc
+
+#-----------
+Outputs:
+  VPC:
+    Value: !Ref VPC
+    Export:
+      Name: AnsibleVPC
+
+  PublicSubnet:        
+    Value: !Ref PublicSubnet
+    Export:
+      Name: AnsiblePublicSubnet
+
+  PrivateSubnet:        
+    Value: !Ref PrivateSubnet
+    Export:
+      Name: AnsiblePrivateSubnet

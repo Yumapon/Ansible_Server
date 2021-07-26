@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ansible server
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  Ec2ImageId:
+    Type: String
+    Default: ami-0bccc42bba4dedac1
+
+Resources:
+#---InstanceProfile, Role
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        }
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Path: /
+      RoleName: ssm-cwagent-role
+
+  InstancePro:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: InstancePro
+      Path: /
+      Roles: 
+        - !Ref IAMRole
+
+#---EC2
+  EC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: !Ref Ec2ImageId
+      IamInstanceProfile: !Ref InstancePro
+      InstanceType: "t3.micro"
+      KeyName: !Ref KeyName
+      AvailabilityZone: !Sub "${AWS::Region}c"
+      SubnetId: !ImportValue AnsiblePrivateSubnet
+      SecurityGroupIds: 
+        - !ImportValue AnsibleSecurityGroup
+      Tags: 
+        - Key: "Name"
+          Value: "ansible-server"
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo su
+          yum update -y
+          yum install -y python38
+          dnf install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+          sudo systemctl enable amazon-ssm-agent
+          sudo systemctl start amazon-ssm-agent
+          sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y
+          sudo yum install -y collectd
+          rpm -Uvh https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
+          yum install vsftpd -y

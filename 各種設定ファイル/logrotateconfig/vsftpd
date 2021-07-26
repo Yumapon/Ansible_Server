@@ -1,0 +1,11 @@
+/var/log/vsftpd.log 
+/var/log/xferlog
+{
+    daily
+    rotate 5
+    missingok
+    notifempty
+    copytruncate
+    dateext
+    dateformat .%Y-%m-%d
+}

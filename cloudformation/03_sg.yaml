@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ansible server sg
+
+Resources:
+#---SG
+  SecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Private Subnet Client SecurityGroup"
+      GroupName: "ansible-server-sg"
+      VpcId: !ImportValue AnsibleVPC
+      SecurityGroupIngress: 
+        -  
+          CidrIp: "0.0.0.0/0"
+          Description: "allow ftp"
+          FromPort: 20
+          IpProtocol: "tcp"
+          ToPort: 20
+        -
+          CidrIp: "0.0.0.0/0"
+          Description: "allow ftp"
+          FromPort: 21
+          IpProtocol: "tcp"
+          ToPort: 21
+        -
+          CidrIp: "0.0.0.0/0"
+          Description: "allow ssh"
+          FromPort: 22
+          IpProtocol: "tcp"
+          ToPort: 22
+        -
+          CidrIp: "0.0.0.0/0"
+          Description: "allow icmp"
+          FromPort: 8
+          IpProtocol: "icmp"
+          ToPort: -1
+#-----------
+Outputs:
+    SecurityGroup:
+        Value: !Ref SecurityGroup
+        Export:
+            Name: AnsibleSecurityGroup

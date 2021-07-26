@@ -1,0 +1,9 @@
+/var/log/ansible.log {
+    daily
+    rotate 5
+    missingok
+    notifempty
+    copytruncate
+    dateext
+    dateformat .%Y-%m-%d
+}
