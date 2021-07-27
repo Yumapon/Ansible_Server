@@ -74,3 +74,4 @@ Resources:
           sudo yum install -y collectd
           rpm -Uvh https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
           yum install vsftpd -y
+          yum install sshpass -y

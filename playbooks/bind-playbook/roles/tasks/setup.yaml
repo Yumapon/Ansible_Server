@@ -1,0 +1,24 @@
+# host名の設定
+# defaultの変数定義からhost名.ドメイン名を読み込み設定する
+- name: Set hostname
+  hostname:
+    name: "{{ hostname }}.{{ domain }}"
+
+- name: Set hostname fact
+  set_fact:
+    ansible_fqdn: "{{ hostname }}.{{ domain }}"
+
+- name: bind install
+  yum:
+    name: bind
+    state: installed
+
+#- name: bind-chroot install
+#  yum:
+#    name: bind-chroot
+#    state: installed
+
+- name: bind-utils install
+  yum:
+    name: bind-utils
+    state: installed

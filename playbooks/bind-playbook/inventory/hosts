@@ -1,7 +1,7 @@
 [dns]
-
+10.0.0.4
 
 [dns:vars]
 ansible_ssh_port=22
-ansible_user=
-ansible_password=
+ansible_user=ec2-user
+ansible_password=Password

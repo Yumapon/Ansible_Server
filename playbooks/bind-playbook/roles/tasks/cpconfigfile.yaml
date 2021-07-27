@@ -1,7 +1,7 @@
-- name: stop_named-chroot
-  service:
-    name: named-chroot
-    state: stopped
+#- name: stop_named-chroot
+#  service:
+#    name: named-chroot
+#    state: stopped
 
 - name: copy named.conf
   template:
@@ -55,8 +55,8 @@
     mode: 0640
   notify: Start named
 
-- name: start_and_enable_named-chroot
-  service:
-    name: named-chroot
-    state: started
-    enabled: yes
+#- name: start_and_enable_named-chroot
+#  service:
+#    name: named-chroot
+#    state: started
+#    enabled: yes
