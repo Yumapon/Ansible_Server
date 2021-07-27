@@ -1,0 +1,18 @@
+zone "{{ domain }}" IN {
+    type master;
+    file "/etc/named/zones/db.forward";
+    allow-update { key rndc-key; };
+};
+
+{% for item in reverse_domain %}
+zone "{{ item.reverse }}" IN {
+    type master;
+    file "/etc/named/zones/db.reverse";
+    allow-update {key rndc-key; };
+};
+{% endfor %}
+
+controls {
+     inet 127.0.0.1 port 953
+         allow { 127.0.0.1; } keys { "rndc-key"; };
+};

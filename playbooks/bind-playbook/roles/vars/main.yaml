@@ -1,0 +1,23 @@
+---
+
+# ---- for bind server ---
+#hostname の指定がない時は targetで既に設定されているhostnameを使用
+hostname: ansible_test
+#domain 必須パラメータ 指定がない場合は、example.com を使用
+domain: example.com
+
+# reverse_domain: x.x.x.in-addr.arpa. の記述 (zone毎にリストで記載)
+# 指定がない時は、設定されている NICの subnetを用いて設定する
+reverse_domain:
+ - reverse: 1.168.192.in-addr.arpa.
+ - reverse: 1.31.172.in-addr.arpa.
+
+# dns_record: 正引き、逆引き用の DNS Record. 指定がない場合は、設定SKIP
+# name/type/ipaddress は必須パラメータ
+dns_record:
+ - name: aaa
+   type: A
+   ipaddress: 192.168.1.110
+ - name: bbb
+   type: A
+   ipaddress: 172.31.1.100

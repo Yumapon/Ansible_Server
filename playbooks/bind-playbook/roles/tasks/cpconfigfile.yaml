@@ -1,0 +1,62 @@
+- name: stop_named-chroot
+  service:
+    name: named-chroot
+    state: stopped
+
+- name: copy named.conf
+  template:
+    src: named.conf.j2
+    dest: /etc/named.conf
+    owner: root
+    group: named
+    mode: 0660
+  notify: Start named
+
+- name: Make named directory
+  file:
+    path: /etc/named
+    state: directory
+    owner: root
+    group: named
+    mode: 0750
+
+- name: copy named.rfc1912.zones
+  template:
+    src: named.rfc1912.zones.j2
+    dest: /etc/named.rfc1912.zones
+    owner: root
+    group: named
+    mode: 0660
+  notify: Start named
+
+- name: Make zones Directory
+  file:
+    path: /etc/named/zones
+    state: directory
+    owner: root
+    group: named
+    mode: 0750
+
+- name: Copy forward file
+  template:
+    src: db.forward.j2
+    dest: /etc/named/zones/db.forward
+    owner: root
+    group: named
+    mode: 0640
+  notify: Start named
+
+- name: Copy reverse file
+  template:
+    src: db.reverse.j2
+    dest: /etc/named/zones/db.reverse
+    owner: root
+    group: named
+    mode: 0640
+  notify: Start named
+
+- name: start_and_enable_named-chroot
+  service:
+    name: named-chroot
+    state: started
+    enabled: yes

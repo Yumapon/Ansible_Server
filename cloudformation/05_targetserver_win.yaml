@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ansible server kensho
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  Ec2ImageId2:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /aws/service/ami-windows-latest/Windows_Server-2016-Japanese-Full-Base
+
+Resources:
+  SecurityGroup2:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Private Subnet Client SecurityGroup"
+      GroupName: "target-server-sg"
+      VpcId: !ImportValue AnsibleVPC
+      SecurityGroupIngress: 
+        -  
+          CidrIp: "0.0.0.0/0"
+          Description: "allow rdp"
+          FromPort: 3389
+          IpProtocol: "tcp"
+          ToPort: 3389
+        -
+          CidrIp: "0.0.0.0/0"
+          Description: "allow winrm-https"
+          FromPort: 5986
+          IpProtocol: "tcp"
+          ToPort: 5986
+        -
+          CidrIp: "0.0.0.0/0"
+          Description: "allow winrm-http"
+          FromPort: 5985
+          IpProtocol: "tcp"
+          ToPort: 5985
+        -
+          CidrIp: "0.0.0.0/0"
+          Description: "allow icmp"
+          FromPort: 8
+          IpProtocol: "icmp"
+          ToPort: -1
+
+  EC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: !Ref Ec2ImageId2
+      InstanceType: "t3.micro"
+      KeyName: !Ref KeyName
+      AvailabilityZone: !Sub "${AWS::Region}a"
+      SubnetId: !ImportValue AnsiblePublicSubnet
+      SecurityGroupIds: 
+        - !Ref SecurityGroup2
+      Tags: 
+        - Key: "Name"
+          Value: "target-server-windows"
+      UserData:
+        Fn::Base64: |
+          <powershell>
+          #Change Password
+          function ChangePassword( $UserID, $Password )
+          {
+          $hostname = $Env:COMPUTERNAME
+          [ADSI]$UpdateUser = "WinNT://$HostName/$UserID,User"
+          $UpdateUser.setPassword( $Password )
+          $UpdateUser.SetInfo()
+          }
+          $UserID = "Administrator"
+          $Password = "ec2-user"
+          ChangePassword $UserID $Password
+          </powershell>

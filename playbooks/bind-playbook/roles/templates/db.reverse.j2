@@ -1,0 +1,15 @@
+$TTL 604800	; 1 week
+@	IN SOA	{{ ansible_fqdn }}. admin.{{ domain }}. (
+				7          ; serial
+				604800     ; refresh (1 week)
+				86400      ; retry (1 day)
+				2419200    ; expire (4 weeks)
+				604800     ; minimum (1 week)
+				)
+	IN	NS	{{ ansible_fqdn }}.
+{{ ansible_default_ipv4.address.split('.')[3] }}     IN	PTR {{ hostname }}.{{ ansible_default_ipv4.address.split('.')[2] }}.{{ ansible_default_ipv4.address.split('.')[1] }}.{{ ansible_default_ipv4.address.split('.')[0] }}.in-addr.arpa.
+{% if dns_record is defined %}
+{% for item in dns_record %}
+{{ item.ipaddress.split('.')[3] }}	IN      PTR {{item.name}}.{{ item.ipaddress.split('.')[2] }}.{{item.ipaddress.split('.')[1]}}.{{item.ipaddress.split('.')[0]}}.in-addr.arpa.
+{% endfor %}
+{% endif %}

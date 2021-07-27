@@ -1,0 +1,7 @@
+[dns]
+
+
+[dns:vars]
+ansible_ssh_port=22
+ansible_user=
+ansible_password=

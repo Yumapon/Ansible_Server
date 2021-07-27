@@ -1,0 +1,7 @@
+---
+- name: bind構築
+  hosts: dns
+  become: true
+  gather_facts: False
+  roles:
+   - roles

@@ -1,0 +1,6 @@
+---
+# vars file for Bind setup
+domain: example.com
+hostname: "{{ ansible_hostname }}"
+reverse_domain: 
+ - reverse: "{{ ansible_default_ipv4.network.split('.')[0] }}.{{ ansible_default_ipv4.network.split('.')[1] }}.{{ ansible_default_ipv4.network.split('.')[2] }}.in-addr.arpa."
