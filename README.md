@@ -77,7 +77,7 @@
 
     本当はftpuserを作った方がいい気もするが、めんどいのでansibleユーザに接続させる(chrootにansible入れないし大丈夫？)
 
-    * 設定ファイルの作成
+    * 設定ファイルの作成（設定ファイルの内容は『各種設定ファイル』ディレクトリを参照）
 
         ```bash
         #vsftpdの設定
@@ -102,7 +102,7 @@
 
 7. ログ出力
 
-    * ansibleのログ
+    * ansibleのログ（設定ファイルの内容は『各種設定ファイル』ディレクトリを参照）
 
         ```bash
         sudo su
@@ -116,14 +116,14 @@
         chmod 666 /var/log/ansible.log
         ```
 
-    * ftpのログ
+    * ftpのログ（設定ファイルの内容は『各種設定ファイル』ディレクトリを参照）
 
         ```bash
         #ログ出力の設定はftpの設定ファイルに記述済み
         touch /var/log/vsftpd.log
         ```
 
-    * sftpのログ
+    * sftpのログ（設定ファイルの内容は『各種設定ファイル』ディレクトリを参照）
 
         ```bash
         vi /etc/rsyslog.conf
@@ -139,7 +139,7 @@
 
 8. logrotate設定
 
-    * logrotateの設定
+    * logrotateの設定（設定ファイルの内容は『各種設定ファイル』ディレクトリを参照）
 
         ```bash
         vi /etc/logrotate.d/ansible
@@ -162,7 +162,7 @@
         /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop
         ```
 
-    * 設定ファイルの作成
+    * 設定ファイルの作成（設定ファイルの内容は『各種設定ファイル』ディレクトリを参照）
 
         ```bash
         vi /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
