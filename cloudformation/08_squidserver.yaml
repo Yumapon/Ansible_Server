@@ -4,7 +4,7 @@ Description: ansible server kensho
 Mappings:
   StackConfig:
     EC2IPS: 
-      IP: 10.0.0.16
+      IP: 10.0.0.13
 
 Parameters:
   KeyName:

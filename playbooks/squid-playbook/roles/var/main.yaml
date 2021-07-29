@@ -1,0 +1,4 @@
+---
+# ---- for squid server ---
+#hostname の指定がない時は targetで既に設定されているhostnameを使用
+hostname: proxy

@@ -1,0 +1,10 @@
+---
+# vars file for squid setup
+# gatharing factで取得したデータを変数として定義
+# ansible_hostname : 接続対象のhostname
+# ansible_default_ipv4 : 接続対象のIP
+# 参考URL（https://docs.ansible.com/ansible/2.9_ja/user_guide/playbooks_variables.html）
+domain: main.co.jp
+hostname: "{{ ansible_hostname }}"
+reverse_domain: 
+ - reverse: "{{ ansible_default_ipv4.network.split('.')[0] }}.{{ ansible_default_ipv4.network.split('.')[1] }}.{{ ansible_default_ipv4.network.split('.')[2] }}.in-addr.arpa."

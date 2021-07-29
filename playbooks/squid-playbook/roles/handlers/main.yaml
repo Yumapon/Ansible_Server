@@ -1,0 +1,7 @@
+---
+# handlers file for Bind setup
+- name: Start squid
+  service:
+    name: squid
+    state: started
+  become: yes

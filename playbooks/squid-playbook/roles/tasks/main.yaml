@@ -1,0 +1,16 @@
+- name: Make squid Directory
+  file:
+    path: /etc/squid
+    state: directory
+    owner: root
+    group: squid
+    mode: 0750
+
+- name: copy squid.conf
+  template:
+    src: squid.conf.j2
+    dest: /etc/squid.conf
+    owner: root
+    group: squid
+    mode: 0660
+  notify: Start squid
