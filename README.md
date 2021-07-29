@@ -45,7 +45,7 @@
     ansible localhost -m ping
     ```
 
-3. target-server-Windowsにセッションマネージャで接続し、以下コマンドを実行
+3. target-server-Windowsにセッションマネージャで接続し、以下コマンドを実行 (WindowsServerで検証したい場合)
 
     ```powershell
     winrm set winrm/config/service/auth '@{Basic="true"}'
@@ -53,7 +53,7 @@
     winrm set winrm/config/service '@{AllowUnencrypted="true"}'
     ```
 
-4. target-server-WindowsにRDPでログインし、下記参考をみながらボリュームの割り当てを行う。（Option）
+4. target-server-WindowsにRDPでログインし、下記参考をみながらボリュームの割り当てを行う。(Option)
 
     [Windows で Amazon EBS ボリュームを使用できるようにします。](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/WindowsGuide/ebs-using-volumes.html)
 
