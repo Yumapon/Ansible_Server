@@ -14,7 +14,7 @@
 
     [EC2 キーペアの作成](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/WindowsGuide/ec2-key-pairs.html#prepare-key-pair)
 
-## 構築手順
+## AnsibleServer構築手順
 
 1. 東京リージョンのCloudFormationで./cloudformation/配下の01〜04までを使用し、スタックを作成 (05から07はOption)
 2. ansible-serverにセッションマネージャで接続し、以下コマンドを実行
@@ -45,7 +45,7 @@
     ansible localhost -m ping
     ```
 
-3. target-server-Windowsにセッションマネージャで接続し、以下コマンドを実行 (WindowsServerで検証したい場合)
+3. target-server-Windowsにセッションマネージャで接続し、以下コマンドを実行 (WindowsServerで検証したい場合: ※前提条件・・・05のcloudforamtionを流していること)
 
     ```powershell
     winrm set winrm/config/service/auth '@{Basic="true"}'
@@ -53,7 +53,7 @@
     winrm set winrm/config/service '@{AllowUnencrypted="true"}'
     ```
 
-4. target-server-WindowsにRDPでログインし、下記参考をみながらボリュームの割り当てを行う。(Option)
+4. target-server-WindowsにRDPでログインし、下記参考をみながらボリュームの割り当てを行う。(WindowsServerで検証したい場合: ※前提条件・・・05のcloudforamtionを流していること)
 
     [Windows で Amazon EBS ボリュームを使用できるようにします。](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/WindowsGuide/ebs-using-volumes.html)
 
