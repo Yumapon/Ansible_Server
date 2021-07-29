@@ -17,3 +17,13 @@ zone "{{ item.reverse_domain }}" IN {
 };
 {% endfor %}
 {% endif %}
+
+{% if forwarding_domain is defined %}
+{% for item in forwarding_domain %}
+zone "{{ item.domain }}" IN {
+        type forward;
+        forwarders { {% for item2 in item.forwarders %}{{ item2.ip }} {% endfor %}};
+        forward only;
+};
+{% endfor %}
+{% endif %}

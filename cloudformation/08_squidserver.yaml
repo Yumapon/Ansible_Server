@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ansible server kensho
+
+Mappings:
+  StackConfig:
+    EC2IPS: 
+      IP: 10.0.0.16
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  Ec2ImageId:
+    Type: String
+    Default: ami-0bccc42bba4dedac1
+
+Resources:
+#---InstanceProfile, Role
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: ! |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        }
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Path: /
+      RoleName: squid-role
+
+  InstancePro:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: squidInstancePro
+      Path: /
+      Roles: 
+        - !Ref IAMRole
+
+#---SG
+  SecurityGroup1:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Private Subnet Client SecurityGroup"
+      GroupName: "squid-server-sg"
+      VpcId: !ImportValue AnsibleVPC
+      SecurityGroupIngress: 
+        -  
+          CidrIp: "0.0.0.0/0"
+          Description: "allow ssh"
+          FromPort: 22
+          IpProtocol: "tcp"
+          ToPort: 22
+        -
+          CidrIp: "0.0.0.0/0"
+          Description: "allow icmp"
+          FromPort: 8
+          IpProtocol: "icmp"
+          ToPort: -1
+        - 
+          CidrIp: "0.0.0.0/0"
+          Description: "allow squid Port access"
+          FromPort: 8080
+          IpProtocol: "tcp"
+          ToPort: 8080
+
+  EC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: !Ref Ec2ImageId
+      IamInstanceProfile: !Ref InstancePro
+      InstanceType: "t3.micro"
+      KeyName: !Ref KeyName
+      AvailabilityZone: !Sub "${AWS::Region}a"
+      SubnetId: !ImportValue AnsiblePublicSubnet
+      PrivateIpAddress:  !FindInMap [ StackConfig, EC2IPS, IP ] 
+      SecurityGroupIds: 
+        - !Ref SecurityGroup1
+      Tags: 
+        - Key: "Name"
+          Value: "squid-server"
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo su
+          yum update -y
+          yum install -y python38
+          dnf install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+          sudo systemctl enable amazon-ssm-agent
+          sudo systemctl start amazon-ssm-agent
+          yum install squid -y
+          systemctl enable squid

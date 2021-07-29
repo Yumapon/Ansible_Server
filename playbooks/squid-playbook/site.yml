@@ -1,0 +1,7 @@
+---
+- name: squid構築
+  hosts: squid
+  become: true
+  gather_facts: yes
+  roles:
+   - roles

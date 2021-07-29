@@ -12,6 +12,19 @@ resolv_reverse_domain:
   - reverse_domain: 1.168.192.in-addr.arpa.
   - reverse_domain: 1.31.172.in-addr.arpa.
 
+#forward設定
+forwarding_domain:
+  - domain: sub.main.co.jp
+    forwarders:
+      - ip: 8.8.8.8;
+  - domain: 10.167.192.in-addr.arpa.
+    forwarders:
+      - ip: 8.8.8.8;
+  - domain: 10.30.172.in-addr.arpa.
+    forwarders:
+      - ip: 8.8.8.8;
+      - ip: 9.9.9.9;
+
 # record: 正引き用の DNS Record. 指定がない場合は、設定SKIP
 # key/type/value は必須パラメータ
 record:

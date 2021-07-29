@@ -1,0 +1,7 @@
+[squid]
+10.0.0.16
+
+[squid:vars]
+ansible_ssh_port=22
+ansible_user=ec2-user
+ansible_password=password
