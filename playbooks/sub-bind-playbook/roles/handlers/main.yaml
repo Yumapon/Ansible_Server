@@ -1,0 +1,7 @@
+---
+# handlers file for Bind setup
+- name: Start named
+  service:
+    name: named
+    state: started
+  become: yes
