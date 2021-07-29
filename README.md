@@ -1,6 +1,23 @@
 # Ansible_Environment
 
-## 前提条件
+## このREADMEに記載している内容
+
+以下手順にそって進めていくと、基本的なAnsibleServerを構築することができます。  
+自身の学習用にlogを出力したりしていますが、その辺りは取捨選択して実施してください。  
+※ftpセットアップはやったほうがPlayBookをサーバへ送るのに便利です。  
+
+* 環境
+
+    Server: Amazon EC2(t3.micro)  
+    OS: RHEL8  
+    Python: 3.8  
+    Ansible: 2.9  
+
+<ヒント>  
+同梱しているPlaybookの使用方法は、各PlayBook側にREADMEを参照してください。  
+ベストエフォートで提供するようにします。  
+
+## 構築の前提条件
 
 何かしらキーペアを作成しておいてください。
 
