@@ -33,7 +33,7 @@
 
 ## AnsibleServer構築手順
 
-1. 東京リージョンのCloudFormationで./cloudformation/配下の01〜04までを使用し、スタックを作成 (05から07はOption)
+1. 東京リージョンのCloudFormationで./cloudformation/配下の01〜04までを使用し、スタックを作成 (05以降はOption)
 2. ansible-serverにセッションマネージャで接続し、以下コマンドを実行
 
     ```sh
